@@ -145,7 +145,8 @@
                 <div id="mainMenuPanel" class="menu">
 
                     @*// ----- Action étape C -----*@
-                    <span> @Html.Action("GetLikesPanel", new { mediaId = Model.Id }) </span>
+                    @*<span> @Html.Action("GetLikesPanel", new { mediaId = Model.Id }) </span>*@
+                    <div id="detailsLikesPanel">@Html.Action("GetLikesPanel", "Medias", new { mediaId = currentMediaId })</div>
 
                     @if ((bool)Session["UserCanEditCurrentMedia"] && userCanWrite)
                     {
@@ -203,16 +204,3 @@
         </div>
     </div>
 }
-
-<script>
-    function toggleLike(mediaId, icon) {
-        $.get('/Medias/ToggleLike?mediaId=' + mediaId, function () {
-            setTimeout(function () {
-                $.get('/Medias/GetMedias?forceRefresh=true', function (html) {
-                    if (html) $('#MediaListPanel').html(html);
-                });
-            }, 500); // 0.5 seconde de délais (500 ms)
-        });
-    }
-</script>
-
