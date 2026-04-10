@@ -1,0 +1,19 @@
+﻿@model List<Models.User>
+@{
+    string selectedCreator = (string)Session["SearchByCreator"] != null ? (string)Session["SearchByCreator"] : "";
+}
+
+<select id="mediasCreatorSelect" class="form-control">
+    <option value="" selected>Tous les usager qui ont des videos</option>
+    @foreach (var creator in Model)
+    {
+        if (selectedCreator == creator.Id.ToString())
+        {
+            <option value="@creator.Id" selected>@creator.Name</option>
+        }
+        else
+        {
+            <option value="@creator.Id">@creator.Name</option>
+        }
+    }
+</select>

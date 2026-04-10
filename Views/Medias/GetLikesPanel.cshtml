@@ -1,0 +1,30 @@
+﻿@{
+    int mediaId = ViewBag.MediaId;
+    int count = ViewBag.LikesCount;
+    bool hasLiked = ViewBag.UserHasLiked;
+    string likerNames = ViewBag.LikerNames;
+    string icon = hasLiked ? "fa-thumbs-up" : "fa-thumbs-up";
+    string iconClass = hasLiked ? "fa-solid fa-thumbs-up" : "fa-regular fa-thumbs-up";
+    string color = hasLiked ? "dodgerblue" : "blue";
+}
+
+<span title="@likerNames">
+    <span style="font-weight:bold">@count</span>
+    <i class="@iconClass"
+       style="color: dodgerblue; cursor: pointer; font-size: 1.2em;"
+       onclick="toggleLike(@mediaId, this)"
+       title="@(count > 0 ? likerNames : "Aucun j'aime")">
+    </i>
+</span>
+
+<script>
+    function toggleLike(mediaId, icon) {
+        $.get('/Medias/ToggleLike?mediaId=' + mediaId, function () {
+            setTimeout(function () {
+                $.get('/Medias/GetMedias?forceRefresh=true', function (html) {
+                    if (html) $('#MediaListPanel').html(html);
+                });
+            }, 500); // 0.5 seconde de délais (500 ms)
+        });
+    }
+</script>
