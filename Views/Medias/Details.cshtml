@@ -13,12 +13,21 @@
     <script>
         $(() => {
             newSession(600);
-            mediaDetails_ARP = new AutoRefreshedPanel("detailsPanel", "/Medias/GetMediaDetails", 5, mediaDetailsPostRefresh);
+            mediaDetails_ARP = new AutoRefreshedPanel("detailsPanel", "/Medias/GetMediaDetails", 2, mediaDetailsPostRefresh);
             sessionStorage.setItem("RestoreScrollPosition", "1");
         })
 
-        function mediaDetailsPostRefresh() {
+        function mediaDetailsPostRefresh(fromRefresh = true) {
             // todo
+
+            if (fromRefresh) {
+                $(".toggleLikeCmd").off();
+                $(".toggleLikeCmd").click(function (e) {
+                    mediaDetails_ARP.command("/Medias/ToggleMediaLike/" + $(this).attr("mediaId"));
+                    e.preventDefault();
+                });
+            }
+
             highlightKeyword();
         }
 

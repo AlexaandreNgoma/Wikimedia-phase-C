@@ -197,7 +197,7 @@ public class MediasController : Controller
             int mediaId = (int)Session["CurrentMediaId"];
 
             Media Media = DB.Medias.Get(mediaId);
-            if (DB.Users.HasChanged || DB.Medias.HasChanged || forceRefresh)
+            if (DB.Users.HasChanged || DB.Medias.HasChanged  || DB.Likes.HasChanged || forceRefresh)
             {
                 return PartialView(Media);
             }
@@ -215,6 +215,7 @@ public class MediasController : Controller
             {
                 if (DB.Users.HasChanged ||
                     DB.Medias.HasChanged ||
+                    DB.Likes.HasChanged ||
                     forceRefresh)
                 {
                     InitSessionVariables();
@@ -441,6 +442,7 @@ public class MediasController : Controller
             {
                 if (Media.OwnerId == Models.User.ConnectedUser.Id || Models.User.ConnectedUser.IsAdmin)
                 {
+                    DB.Likes.DeleteByMedia(id);
                     DB.Medias.Delete(id);
                     return RedirectToAction("List");
                 }
