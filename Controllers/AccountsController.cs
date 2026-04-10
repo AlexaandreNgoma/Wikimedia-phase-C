@@ -286,6 +286,15 @@ namespace Controllers
         {
             DB.Events.Add("DeleteProfil");
             User connectedUser = Models.User.ConnectedUser;
+            foreach (var media in DB.Medias.ToList())
+            {
+                if (media.OwnerId == connectedUser.Id)
+                {
+                    DB.Medias.Delete(media.Id);
+                    DB.Likes.DeleteByMedia(media.Id);
+                }
+            }
+
             DB.Users.Delete(connectedUser.Id);
             return RedirectToAction("Login?message=Votre compte a été effacé avec succès!");
         }
@@ -382,6 +391,14 @@ namespace Controllers
                 {
                     DB.Events.Add("DeleteUser " + user.Name);
                     string message = "Votre compte a été effacé par l'administrateur du site.";
+                    foreach (var media in DB.Medias.ToList())
+                    {
+                        if (media.OwnerId == user.Id)
+                        {
+                            DB.Medias.Delete(media.Id);
+                            DB.Likes.DeleteByMedia(media.Id);
+                        }
+                    }
                     DB.Users.Delete(id);
                     AccountsEmailing.SendEmailUserStatusChanged(message, user);
                 }
