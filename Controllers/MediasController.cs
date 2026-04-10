@@ -28,8 +28,6 @@ public class MediasController : Controller
         if (Session["SortByLikes"] == null) Session["SortByLikes"] = false;
         if (Session["SearchByCreator"] == null) Session["SearchByCreator"] = "";
 
-        if (Session["SelectedOwner"] == null) Session["SelectedOwner"] = "";
-
 
 
         if (Session["SortByTitle"] == null) Session["SortByTitle"] = true;
@@ -75,7 +73,7 @@ public class MediasController : Controller
             }
 
             // ----- Action étape C -----
-            string selectedOwnerStr = (string)Session["SelectedOwner"];
+            string selectedOwnerStr = (string)Session["SearchByCreator"];
             if (selectedOwnerStr != "")
             {
                 int ownerId = int.Parse(selectedOwnerStr);
@@ -286,9 +284,15 @@ public class MediasController : Controller
         try
         {
             InitSessionVariables();
-            var ownerIds = DB.Medias.ToList().Select(m => m.OwnerId).Distinct();
-            var owners = ownerIds.Select(id => DB.Users.Get(id)).Where(u => u != null).ToList();
-            return PartialView(owners);
+            bool search = (bool)Session["Search"];
+            if (search)
+            {
+                var ownerIds = DB.Medias.ToList().Select(m => m.OwnerId).Distinct();
+                var owners = ownerIds.Select(id => DB.Users.Get(id)).Where(u => u != null).ToList();
+                Console.Write(owners);
+                return PartialView(owners);
+            }
+            return null;
         }
         catch (System.Exception ex)
         {
@@ -315,14 +319,6 @@ public class MediasController : Controller
     {
         ResetMediasPaging();
         Session["SearchByCreator"] = value;
-        return RedirectToAction("List");
-    }
-
-    // ----- Action étape C -----
-    public ActionResult SetSearchMediasOwner(string value)
-    {
-        ResetMediasPaging();
-        Session["SelectedOwner"] = value;
         return RedirectToAction("List");
     }
 

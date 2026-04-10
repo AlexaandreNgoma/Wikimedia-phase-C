@@ -12,6 +12,7 @@
 
         let mediasListAutoRefreshPanel = null;
         let categoriesSelectAutoRefreshPanel = null;
+        let ownerSelectAutoRefreshPanel = null;
         let loadMoreTriggerMargin = 10;
         let pauseScrollEvent = false;
 
@@ -32,6 +33,14 @@
                     "/Medias/GetMediasCategoriesList",
                     -1 /* manually refreshed */,
                     categoriesSelectPostRefresh);
+
+            //phase-c
+            let ownerSelectAutoRefreshPanel =
+                new AutoRefreshedPanel(
+                    "ownerSelectPanel",
+                    "/Medias/GetMediasCreatorsList",
+                    -1 /* manually refreshed */,
+                    ownerSelectPostRefresh);
 
             let keywordsOnchangeTimer = null;
             let resizeTimer = null;
@@ -102,7 +111,7 @@
             function mediasListPostRefresh(fromRefresh = true) {
                 if (fromRefresh) {
                     categoriesSelectAutoRefreshPanel.refresh(true);
-                    creatorsSelectAutoRefreshPanel.refresh(true);
+                    ownerSelectAutoRefreshPanel.refresh(true);
                     $(".toggleLikeCmd").off();
                     $(".toggleLikeCmd").click(function (e) {
                         mediasListAutoRefreshPanel.command("/Medias/ToggleMediaLike/" + $(this).attr("mediaId"));
@@ -149,6 +158,21 @@
                 });
                 $("#categorySelect").on('change', function () {
                     window.location = "/Medias/SetSearchCategory?value=" + $("#categorySelect").val();
+                });
+            }
+
+            //phase-c
+            function ownerSelectPostRefresh() {
+
+                $("#mediasCreatorSelect").off();
+                $("#mediasCreatorSelect").on("focus", function () {
+                    mediasListAutoRefreshPanel.pause();
+                });
+                $("#mediasCreatorSelect").on("blur", function () {
+                    mediasListAutoRefreshPanel.restart();
+                });
+                $("#mediasCreatorSelect").on('change', function () {
+                    window.location = "/Medias/SetSearchCreator?value=" + $("#mediasCreatorSelect").val();
                 });
             }
         })
